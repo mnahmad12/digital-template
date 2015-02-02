@@ -16,23 +16,33 @@ window.onload = function() {
     var game = new Phaser.Game( 800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
     
     function preload() {
-        // Load an image and call it 'logo'.
-        game.load.image( 'logo', 'assets/phaser.png' );
+        //pre-loading the zombies
+		game.load.spritesheet('mummy', 'assets/metalslug_mummy37x45.png', 37, 45, 18);
     }
     
-    var bouncy;
+   
+	var mummies;
     
     function create() {
-        // Create a sprite at the center of the screen using the 'logo' image.
-        bouncy = game.add.sprite( game.world.centerX, game.world.centerY, 'logo' );
-        // Anchor the sprite at its center, as opposed to its top-left corner.
-        // so it will be truly centered.
-        bouncy.anchor.setTo( 0.5, 0.5 );
         
-        // Turn on the arcade physics engine for this sprite.
-        game.physics.enable( bouncy, Phaser.Physics.ARCADE );
+		//creating mummies
+		mummies = game.add.group();
+		
+		//Creating 10 mummies, each initially dead
+		mummies.createMultiple(20,"mummy",0,false);
+		
+		
+		
+		//bringing mummies to life!
+		game.time.events.repeat(Phaser.Timer.SECOND, 20, resurrect, this);
+ 
+        
+      
+		game.physics.enable(mummies,Phaser.Physics.ARCADE);
+		
         // Make it bounce off of the world bounds.
-        bouncy.body.collideWorldBounds = true;
+    
+		mummies.body.collideWorldBounds = true;
         
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
@@ -40,13 +50,31 @@ window.onload = function() {
         var text = game.add.text( game.world.centerX, 15, "Build something awesome.", style );
         text.anchor.setTo( 0.5, 0.0 );
     }
+	
+	
+	function resurrect() {
+
+		//  Get a dead item
+		var item = mummies.getFirstDead();
+
+		if (item)
+		{
+			//  And bring it back to life
+			item.reset(game.world.randomX, game.world.randomY);
+
+			//  This just changes its frame
+			item.frame = game.rnd.integerInRange(0, 36);
+			
+			//getting the mummies to run
+			item.animations.add('walk');
+
+			item.animations.play('walk', 30, true);
+			
+			//and move towards cursor
+			item.rotation = game.physics.arcade.accelerateToPointer( item, this.game.input.activePointer, 500, 500, 500 );
+		}
+
+	}
     
-    function update() {
-        // Accelerate the 'logo' sprite towards the cursor,
-        // accelerating at 500 pixels/second and moving no faster than 500 pixels/second
-        // in X or Y.
-        // This function returns the rotation angle that makes it visually match its
-        // new trajectory.
-        bouncy.rotation = game.physics.arcade.accelerateToPointer( bouncy, this.game.input.activePointer, 500, 500, 500 );
-    }
+    
 };
