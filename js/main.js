@@ -18,15 +18,19 @@ window.onload = function() {
     function preload() {
         //pre-loading the zombies
 		game.load.spritesheet('mummy', 'assets/metalslug_mummy37x45.png', 37, 45, 18);
+		game.load.atlasJSONHash('bob', 'assets/running_bot.png', 'assets/running_bot.json');
     }
     
    
 	var mummies;
+	var bob;
     
     function create() {
         
 		//creating mummies
 		mummies = game.add.group();
+		//and bob
+		bob = game.add.sprite(300,100,'bob');
 		
 		//Creating 10 mummies, each initially dead
 		mummies.createMultiple(20,"mummy",0,false);
@@ -40,6 +44,9 @@ window.onload = function() {
       
 		game.physics.enable(mummies,Phaser.Physics.ARCADE);
 		
+		//making bob walk
+		bob.animations.add('walk');
+		bob.animations.play('walk', 0, true);
         // Make it bounce off of the world bounds.
     
 		mummies.body.collideWorldBounds = true;
@@ -71,10 +78,12 @@ window.onload = function() {
 			item.animations.play('walk', 30, true);
 			
 			//and move towards cursor
-			item.rotation = game.physics.arcade.accelerateToPointer( item, this.game.input.activePointer, 500, 500, 500 );
+			item.rotation = game.physics.arcade.moveToObject( item,bob, 100 );
 		}
 
 	}
+	
+	function update(){}
     
     
 };
