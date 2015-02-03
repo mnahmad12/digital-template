@@ -17,16 +17,20 @@ window.onload = function() {
     
     function preload() {
         //pre-loading the zombies
+		game.load.spritesheet('bob', 'assets/phaser-dude.png', 37, 45, 18);
 		game.load.spritesheet('mummy', 'assets/metalslug_mummy37x45.png', 37, 45, 18);
-		game.load.atlasJSONHash('bob', 'assets/running_bot.png', 'assets/running_bot.json');
     }
     
    
 	var mummies;
 	var bob;
+	var keys;
     
     function create() {
         
+		//starting physics:
+		game.physics.startSystem(Phaser.Physics.ARCADE);
+		
 		//creating mummies
 		mummies = game.add.group();
 		//and bob
@@ -43,19 +47,20 @@ window.onload = function() {
         
       
 		game.physics.enable(mummies,Phaser.Physics.ARCADE);
+		game.physics.enable(bob,Phaser.Physics.ARCADE);
 		
-		//making bob walk
-		bob.animations.add('walk');
-		bob.animations.play('walk', 0, true);
-        // Make it bounce off of the world bounds.
+       
     
-		mummies.body.collideWorldBounds = true;
+		
         
+		
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
         var style = { font: "25px Verdana", fill: "#9999ff", align: "center" };
         var text = game.add.text( game.world.centerX, 15, "Build something awesome.", style );
         text.anchor.setTo( 0.5, 0.0 );
+		
+		
     }
 	
 	
@@ -83,7 +88,43 @@ window.onload = function() {
 
 	}
 	
-	function update(){}
+	function update(){
+		keys = game.input.keyboard.createCursorKeys();
+		
+		bob.body.velocity.x=0;
+		bob.body.velocity.y=0;
+		
+		if (keys.left.isDown)
+		{
+			
+			
+			bob.body.velocity.x=-200;
+			
+		}
+		
+		if (keys.right.isDown)
+		{
+			
+			bob.body.velocity.x=200;
+			
+		}
+		
+		if (keys.up.isDown)
+		{
+			
+			bob.body.velocity.y=-200;
+			
+		}
+		
+		if (keys.down.isDown)
+		{
+			
+			bob.body.velocity.y=200;
+			
+		}
+		
+		
+	}
     
     
 };
