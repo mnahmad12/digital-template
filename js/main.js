@@ -13,21 +13,28 @@ window.onload = function() {
     
     "use strict";
     
+	
     var game = new Phaser.Game( 800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
     
     function preload() {
         //pre-loading the zombies
 		game.load.spritesheet('bob', 'assets/phaser-dude.png', 37, 45, 18);
 		game.load.spritesheet('mummy', 'assets/metalslug_mummy37x45.png', 37, 45, 18);
-    }
+		
+	}
     
-   
+
 	var mummies;
 	var bob;
 	var keys;
-    
+	var text;
+	var style;
+
+	
     function create() {
         
+		
+		
 		//starting physics:
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		
@@ -35,6 +42,8 @@ window.onload = function() {
 		mummies = game.add.group();
 		//and bob
 		bob = game.add.sprite(300,100,'bob');
+		
+		
 		
 		//Creating 10 mummies, each initially dead
 		mummies.createMultiple(20,"mummy",0,false);
@@ -54,14 +63,11 @@ window.onload = function() {
 		
         
 		
-        // Add some text using a CSS style.
-        // Center it in X, and position its top 15 pixels from the top of the world.
-        var style = { font: "25px Verdana", fill: "#9999ff", align: "center" };
-        var text = game.add.text( game.world.centerX, 15, "Build something awesome.", style );
-        text.anchor.setTo( 0.5, 0.0 );
+        
 		
 		
     }
+	
 	
 	
 	function resurrect() {
@@ -89,41 +95,74 @@ window.onload = function() {
 	}
 	
 	function update(){
+	
+		//adding some text with instructions:
+		// Add some text using a CSS style.
+        // Center it in X, and position its top 15 pixels from the top of the world.
+        style = { font: "25px Verdana", fill: "#9999ff", align: "center" };
+        text = game.add.text( game.world.centerX, 15, "Don't Let the Zombies Get You!.", style );
+        text.anchor.setTo( 0.5, 0.0 );
+		
 		keys = game.input.keyboard.createCursorKeys();
 		
-		bob.body.velocity.x=0;
-		bob.body.velocity.y=0;
-		
-		if (keys.left.isDown)
+		if(bob.exists)
 		{
+			bob.body.velocity.x=0;
+			bob.body.velocity.y=0;
 			
+			if (keys.left.isDown)
+			{
+				
+				
+				bob.body.velocity.x=-200;
+				
+			}
 			
-			bob.body.velocity.x=-200;
+			if (keys.right.isDown)
+			{
+				
+				bob.body.velocity.x=200;
+				
+			}
 			
+			if (keys.up.isDown)
+			{
+				
+				bob.body.velocity.y=-200;
+				
+			}
+			
+			if (keys.down.isDown)
+			{
+				
+				bob.body.velocity.y=200;
+				
+			}
+		
+			if(game.physics.arcade.overlap(mummies,bob,null,null,this))
+			{
+				
+				bob.kill();
+				bob.exists=false;
+				
+				endGame();
+				
+			}
+		
 		}
+				
+			
 		
-		if (keys.right.isDown)
-		{
-			
-			bob.body.velocity.x=200;
-			
-		}
-		
-		if (keys.up.isDown)
-		{
-			
-			bob.body.velocity.y=-200;
-			
-		}
-		
-		if (keys.down.isDown)
-		{
-			
-			bob.body.velocity.y=200;
-			
-		}
+	}
+	
+	function endGame()
+	{
 		
 		
+		
+		style = { font: "25px Verdana", fill: "#9999ff", align: "center" };
+		text=game.add.text( game.world.centerX, 15, "Game Over.", style );
+		text.anchor.setTo( 0.5, 0.0 );
 	}
     
     
