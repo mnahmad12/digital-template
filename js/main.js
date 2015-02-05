@@ -157,6 +157,7 @@ window.onload = function() {
 			
 			this.game.time.events.repeat(Phaser.Timer.SECOND, 20, this.resurrect,this );
  
+ 
         //getting the key to move around and bounce
 			this.key.body.collideWorldBounds=true;
 			this.key.body.velocity.setTo(200,200);
@@ -189,6 +190,7 @@ window.onload = function() {
 			
 			//and move towards cursor
 				item.rotation = this.physics.arcade.moveToObject( item,this.bob, 100+this.rnd.integerInRange(10,200) );
+				item.checkWorldBounds=true;
 			}
 
 		},
@@ -206,40 +208,39 @@ window.onload = function() {
 		
 			this.keys = this.input.keyboard.createCursorKeys();
 		
-			if(this.bob.exists)
+			
+				
+			this.bob.body.velocity.x=0;
+			this.bob.body.velocity.y=0;
+			
+			if (this.keys.left.isDown)
 			{
-				
-				this.bob.body.velocity.x=0;
-				this.bob.body.velocity.y=0;
-				
-				if (this.keys.left.isDown)
-				{
-					this.bob.body.velocity.x=-200;	
-				}
-			
-				if (this.keys.right.isDown)
-				{
-					this.bob.body.velocity.x=200;	
-				}
-			
-				if (this.keys.up.isDown)
-				{	
-					this.bob.body.velocity.y=-200;	
-				}
-			
-				if (this.keys.down.isDown)
-				{	
-					this.bob.body.velocity.y=200;
-				}
-		
-				if(this.physics.arcade.overlap(this.bob,this.mummies,null,null,this))
-				{
-					this.bob.kill();
-					this.bob.exists=false;	
-					this.goToStateC();
-				}
-			
+				this.bob.body.velocity.x=-200;	
 			}
+		
+			if (this.keys.right.isDown)
+			{
+				this.bob.body.velocity.x=200;	
+			}
+		
+			if (this.keys.up.isDown)
+			{	
+				this.bob.body.velocity.y=-200;	
+			}
+		
+			if (this.keys.down.isDown)
+			{	
+				this.bob.body.velocity.y=200;
+			}
+	
+			if(this.physics.arcade.overlap(this.bob,this.mummies,null,null,this))
+			{
+				this.bob.kill();
+				this.bob.exists=false;	
+				this.goToStateC();
+			}
+			
+			
 				
 			
 		
