@@ -164,7 +164,17 @@ window.onload = function() {
 			this.physics.arcade.collide(this.mummies,this.key);
 			this.key.body.bounce.set(1);
 	
+	
+			// Add some text using a CSS style.
+        // Center it in X, and position its top 15 pixels from the top of the world.
+			this.style = { font: "25px Verdana", fill: "#9999ff", align: "center" };
+			this.text = this.add.text( this.world.centerX, 15, "Don't Let the Mummies Get You!.", this.style );
+			this.text.anchor.setTo( 0.5, 0.0 );
 		
+		
+			this.keys = this.input.keyboard.createCursorKeys();
+		
+			
 		},
 	
 	
@@ -199,17 +209,11 @@ window.onload = function() {
 		{
 			//window.alert("here?");
 		
-		// Add some text using a CSS style.
-        // Center it in X, and position its top 15 pixels from the top of the world.
-			this.style = { font: "25px Verdana", fill: "#9999ff", align: "center" };
-			this.text = this.add.text( this.world.centerX, 15, "Don't Let the Mummies Get You!.", this.style );
-			this.text.anchor.setTo( 0.5, 0.0 );
 		
-		
-			this.keys = this.input.keyboard.createCursorKeys();
 		
 			
 				
+			//inital bob speed
 			this.bob.body.velocity.x=0;
 			this.bob.body.velocity.y=0;
 			
