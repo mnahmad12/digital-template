@@ -21,7 +21,9 @@ window.onload = function() {
 		this.message;
 		this.cursors;
 		this.logo;
-
+		this.background;
+		this.text;
+		this.style;
 	};
 	
 	P2Game.StateA.prototype = 
@@ -35,9 +37,24 @@ window.onload = function() {
 
 		},
 		
+		preload: function()
+		{
+			this.load.image('worldBack','assets/metal.png')
+			
+		},
+		
 		update: function()
 		{
-			this.game.stage.backgroundColor = '#806000';
+			this.background=this.game.add.tileSprite(0, 0,800,600, 'worldBack');
+			
+			this.style = {font: "25px Arial", fill: "#00FF0A", align: "center" };
+			this.text = this.add.text( this.world.centerX, 150, "Once upon a time phaser-dude bob " +
+				"lost his dog.\n He searched and he searched but to no avail.\n Until one day, a message showed up at his house\n" +
+				" if you want you dog back, go to the Lair of the Monsters,\n find the 3 hidden keys and only then will you get" + 
+				"back you dog!\n So Bob went....... \n\n(Press the Left Arrow, <- , to begin)", this.style );
+			this.text.anchor.setTo( 0.5, 0.0 );
+			
+			
 			this.cursors = this.input.keyboard.createCursorKeys();
 			if (this.cursors.left.isDown)
 			{
@@ -55,7 +72,7 @@ window.onload = function() {
 		this.logo;
 		this.text;
 		this.style;
-
+		
 	};
 	
 	P2Game.StateC.prototype = 
@@ -69,9 +86,11 @@ window.onload = function() {
 
 		},
 		
+	
+		
 		update: function()
 		{
-			this.game.stage.backgroundColor = '#806000';
+			
 			this.cursors = this.input.keyboard.createCursorKeys();
 			
 			this.style = { font: "25px Verdana", fill: "#9999ff", align: "center" };
@@ -94,6 +113,7 @@ window.onload = function() {
 			this.keys;
 			this.text;
 			this.style;
+			this.key;
 		}
 	
 	P2Game.StateB.prototype=
@@ -101,8 +121,9 @@ window.onload = function() {
 		preload: function() 
 		{
         //pre-loading the zombies
-			this.load.spritesheet('bob', 'assets/phaser-dude.png', 28, 28, 18);
-			this.load.spritesheet('mummy', 'assets/metalslug_mummy37x45.png', 37, 45, 15);
+			this.load.spritesheet('bob', 'assets/phaser-dude.png');
+			this.load.spritesheet('mummy', 'assets/metalslug_monster39x40.png',39,40,16);
+			this.load.spritesheet('key','assets/key.png',32,24);
 			this.game.stage.backgroundColor = '#000000';
 		},
     
@@ -111,6 +132,8 @@ window.onload = function() {
 		create: function() 
 		{
 			
+		//world boundary
+			this.world.setBounds(0,0,800,600);
 			
 		//starting physics:
 			this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -119,13 +142,14 @@ window.onload = function() {
 			this.mummies = this.add.group();
 		//and bob
 			this.bob = this.add.sprite(300,100,'bob');
-		
+		//adding the running dog!
+			this.key=this.add.sprite(600,200,'key');
 		
 		
 		//Creating 10 mummies, each initially dead
 			this.mummies.createMultiple(20,"mummy",0,false);
 		
-		
+			this.game.physics.enable(this.key,Phaser.Physics.ARCADE);
 			this.game.physics.enable(this.mummies,Phaser.Physics.ARCADE);
 			this.game.physics.enable(this.bob,Phaser.Physics.ARCADE);
 		
@@ -133,9 +157,11 @@ window.onload = function() {
 			
 			this.game.time.events.repeat(Phaser.Timer.SECOND, 20, this.resurrect,this );
  
-        
-      
-			
+        //getting the key to move around and bounce
+			this.key.body.collideWorldBounds=true;
+			this.key.body.velocity.setTo(200,200);
+			this.physics.arcade.collide(this.mummies,this.key);
+			this.key.body.bounce.set(1);
 	
 		
 		},
@@ -151,7 +177,7 @@ window.onload = function() {
 			if (item)
 			{
 			 //And bring it back to life
-				item.reset((this.world.randomX + (this.bob.x)), (this.world.randomY+(this.bob.y)));
+				item.reset((this.world.randomX + (this.key.x)), (this.world.randomY+(this.key.y)));
 
 			 //This just changes its frame
 				item.frame = this.rnd.integerInRange(0, 36);
@@ -162,7 +188,7 @@ window.onload = function() {
 				item.animations.play('walk', 30, true);
 			
 			//and move towards cursor
-				item.rotation = this.physics.arcade.moveToObject( item,this.bob, 100 );
+				item.rotation = this.physics.arcade.moveToObject( item,this.bob, 100+this.rnd.integerInRange(10,200) );
 			}
 
 		},
@@ -206,7 +232,7 @@ window.onload = function() {
 					this.bob.body.velocity.y=200;
 				}
 		
-				if(this.physics.arcade.collide(this.mummies,this.bob))
+				if(this.physics.arcade.overlap(this.bob,this.mummies,null,null,this))
 				{
 					this.bob.kill();
 					this.bob.exists=false;	
